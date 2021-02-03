@@ -6,7 +6,7 @@
 
 import * as React from 'react';
 
-import {StyleSheet, View, useColorScheme} from 'react-native';
+import {StyleSheet, View, useColorScheme, Platform} from 'react-native';
 
 type Props = $ReadOnly<{|
   values: number,
@@ -17,7 +17,9 @@ export const SegmentsSeparators = ({
   values,
   selectedIndex,
 }: Props): React.Node => {
-  const colorScheme = useColorScheme();
+  if(Platform.OS === 'android') {
+    const colorScheme = useColorScheme();
+  }
   const hide = (val) => {
     return selectedIndex === val || selectedIndex === val + 1;
   };
@@ -30,7 +32,6 @@ export const SegmentsSeparators = ({
             key={val}
             style={[
               styles.separator,
-              colorScheme === 'dark' && styles.darkSeparator,
               hide(val) && styles.hide,
             ]}
           />

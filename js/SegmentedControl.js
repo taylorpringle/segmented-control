@@ -12,7 +12,9 @@ import {
   I18nManager,
   StyleSheet,
   View,
-  useColorScheme,
+  Dimensions,
+  FlatList,
+  Text
 } from 'react-native';
 
 import type {SegmentedControlProps} from './types';
@@ -23,6 +25,8 @@ import {SegmentsSeparators} from './SegmentsSeparators';
  * SegmentedControl
  * iOS 13 Style UISegmentedControl Component for Android and Web
  */
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
 const SegmentedControl = ({
   style,
   onChange,
@@ -36,12 +40,13 @@ const SegmentedControl = ({
   activeFontStyle,
   appearance,
 }: SegmentedControlProps): React.Node => {
-  const colorSchemeHook = useColorScheme();
-  const colorScheme = appearance || colorSchemeHook;
   const [segmentWidth, setSegmentWidth] = React.useState(0);
   const animation = React.useRef(new Animated.Value(0)).current;
 
   const handleChange = (index: number) => {
+    if(selectedIndex == index) {
+      index = null;
+    }
     // mocks iOS's nativeEvent
     const event: any = {
       nativeEvent: {
@@ -70,9 +75,9 @@ const SegmentedControl = ({
       style={[
         styles.default,
         style,
-        colorScheme === 'dark' && styles.darkControl,
         backgroundColor && {backgroundColor},
         !enabled && styles.disabled,
+
       ]}
       onLayout={({
         nativeEvent: {
@@ -84,90 +89,60 @@ const SegmentedControl = ({
           animation.setValue(newSegmentWidth * (selectedIndex || 0));
           setSegmentWidth(newSegmentWidth);
         }
+
       }}>
-      {!backgroundColor && !tintColor && (
-        <SegmentsSeparators
-          values={values.length}
-          selectedIndex={selectedIndex}
-        />
-      )}
       <View style={styles.segmentsContainer}>
-        {values &&
-          values.map((value, index) => {
-            return (
+        <FlatList
+          data={values}
+          numColumns={3}
+          scrollEnabled={false}
+          columnWrapperStyle={{alignItems:'flex-start'}}
+          renderItem={({ item, index }) => (
+            <View style={{flex: 0.33}}>
               <SegmentedControlTab
                 enabled={enabled}
                 selected={selectedIndex === index}
                 key={index}
-                value={value}
+                value={item}
                 tintColor={tintColor}
                 fontStyle={fontStyle}
                 activeFontStyle={activeFontStyle}
-                appearance={colorScheme}
                 onSelect={() => {
                   handleChange(index);
                 }}
               />
-            );
-          })}
-      </View>
-      {selectedIndex != null && segmentWidth ? (
-        <Animated.View
-          style={[
-            styles.slider,
-            {
-              transform: [{translateX: animation}],
-              width: segmentWidth - 4,
-              backgroundColor:
-                tintColor || (colorScheme === 'dark' ? '#636366' : 'white'),
-            },
-          ]}
+            </View>
+          )}
+          keyExtractor={item => item}
         />
-      ) : null}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   default: {
-    overflow: 'hidden',
-    position: 'relative',
-    height: 32,
-    backgroundColor: '#EEEEF0',
+    backgroundColor: '#a9a9a9',
     borderRadius: 9,
+    //width: SCREEN_WIDTH*0.9,
+    justifyContent: 'center',
+    flex: 1,
+    //height: 200,
   },
   darkControl: {
-    backgroundColor: '#1C1C1F',
+    backgroundColor: '#a9a9a9',
   },
   disabled: {
     opacity: 0.4,
   },
-  slider: {
-    position: 'absolute',
-    borderRadius: 7,
-    top: 2,
-    bottom: 2,
-    right: 2,
-    left: 2,
-    borderWidth: 0.5,
-    borderColor: 'rgba(0,0,0,0.04)',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-    elevation: 3,
-  },
   segmentsContainer: {
-    flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    flexWrap: 'wrap',
     alignItems: 'center',
     elevation: 5,
     backgroundColor: 'transparent',
     zIndex: 99,
+    justifyContent: 'center'
   },
 });
 

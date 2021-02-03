@@ -12,7 +12,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  useColorScheme,
+  Dimensions
 } from 'react-native';
 
 import type {FontStyle} from './types';
@@ -26,7 +26,12 @@ type Props = $ReadOnly<{|
   fontStyle?: FontStyle,
   activeFontStyle?: FontStyle,
   appearance?: 'dark' | 'light' | null,
+  backgroundColor:'#636366',
+  activeBackgroundColor:'#a9a9a9',
+  width: number,
 |}>;
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
 
 function isBase64(str) {
   const regex = /^data:image\/(?:gif|png|jpeg|bmp|webp)(?:;charset=utf-8)?;base64,(?:[A-Za-z0-9]|[+/])+={0,2}/;
@@ -42,9 +47,8 @@ export const SegmentedControlTab = ({
   fontStyle = {},
   activeFontStyle = {},
   appearance,
+  width
 }: Props): React.Node => {
-  const colorSchemeHook = useColorScheme();
-  const colorScheme = appearance || colorSchemeHook;
   const {color: textColor, fontSize, fontFamily, fontWeight} = fontStyle;
 
   const {
@@ -61,7 +65,6 @@ export const SegmentedControlTab = ({
     if (tintColor) {
       return 'white';
     }
-    return colorScheme === 'dark' ? '#FFF' : '#000';
   };
   const color = getColor();
 
@@ -70,7 +73,8 @@ export const SegmentedControlTab = ({
     fontFamily: activeFontFamily || fontFamily,
     fontSize: activeFontSize || fontSize,
     color: activeColor || color,
-    fontWeight: activeFontWeight || fontWeight || styles.activeText.fontWeight,
+    fontWeight: activeFontWeight || fontWeight,
+    backgroundColor: '#636366' || '#a9a9a9'
   };
 
   const idleStyle = {
@@ -80,39 +84,40 @@ export const SegmentedControlTab = ({
     fontWeight: fontWeight,
   };
 
+  const containerStyle = {
+    ...styles.default,
+  };
+
+  //Assign type for image
+  var image = value.replace(/\s/g, '');
+  image = image.toLowerCase() + '.png';
+  const label = value.charAt(0).toUpperCase() + value.slice(1);
+
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={[idleStyle, selected && activeStyle], styles.container}
       disabled={!enabled}
       onPress={onSelect}>
-      <View style={[styles.default]}>
-        {typeof value === 'number' || typeof value === 'object' ? (
-          <Image source={value} style={styles.segmentImage} />
-        ) : isBase64(value) ? (
-          <Image source={{uri: value}} style={styles.segmentImage} />
-        ) : (
-          <Text style={[idleStyle, selected && activeStyle]}>{value}</Text>
-        )}
+      <View style={[containerStyle, selected && activeStyle]}>
+          <Image source={{uri:image}} style={styles.segmentImage} />
+          <Text style={[idleStyle, selected && activeStyle]}>{label}</Text>
       </View>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {flex: 1, borderRadius: 5},
+  container: {flex: 1, borderRadius: 5 },
   default: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     margin: 2,
     borderRadius: 5,
-  },
-  activeText: {
-    fontWeight: '700',
+    padding: 5
   },
   segmentImage: {
-    width: 17,
-    height: 17,
+    width: 80,
+    height: 80,
     resizeMode: 'contain',
   },
 });

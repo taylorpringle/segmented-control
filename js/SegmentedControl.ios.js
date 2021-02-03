@@ -46,6 +46,7 @@ class SegmentedControlIOS extends React.Component<Props> {
   static defaultProps = {
     values: [],
     enabled: true,
+    row: 0,
   };
 
   _onChange = (event: Event) => {
@@ -60,6 +61,7 @@ class SegmentedControlIOS extends React.Component<Props> {
       fontStyle,
       activeFontStyle,
       values,
+      row,
       ...props
     } = this.props;
     return (
@@ -101,6 +103,8 @@ class SegmentedControlIOS extends React.Component<Props> {
 const styles = StyleSheet.create({
   segmentedControl: {
     height: 32,
+    display: 'flex',
+    flexWrap: 'wrap',
   },
 });
 
