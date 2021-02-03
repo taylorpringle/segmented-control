@@ -1,6 +1,12 @@
-# `@react-native-community/segmented-control`
+# `Custom @react-native-community/segmented-control`
 
 ![Supports iOS and Android and Web][support-badge]![Github Action Badge][gha-badge] ![npm][npm-badge] [![Lean Core Extracted][lean-core-badge]][lean-core-issue]
+
+Created a custom version of the segemnted-control.
+Changes are:
+- Removed sliding animation when changing index
+- Removed colour scheme
+- Added label to image item
 
 React Native SegmentedControl library. Use SegmentedControl to render a UISegmentedControl iOS.
 
