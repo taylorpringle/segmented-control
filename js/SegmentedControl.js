@@ -27,7 +27,7 @@ import {SegmentsSeparators} from './SegmentsSeparators';
  */
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
-const SegmentedControl = ({
+const CustomSegmentedControl = ({
   style,
   onChange,
   onValueChange,
@@ -146,4 +146,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SegmentedControl;
+export default CustomSegmentedControl;
